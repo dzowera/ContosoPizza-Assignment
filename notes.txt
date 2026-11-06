@@ -1,0 +1,94 @@
+========================================================================
+ASSIGNMENT NOTES & EVIDENCE
+========================================================================
+
+------------------------------------------------------------------------
+ITEM 1: Evidence of Existing and Additional Pizzas
+------------------------------------------------------------------------
+Existing Pizzas in System:
+- ID 1: Classic Italian (Gluten-Free: False)
+- ID 2: Veggie (Gluten-Free: True)
+
+My Additional Pizza:
+- ID 3: Supreme Feast (Gluten-Free: False)
+
+------------------------------------------------------------------------
+ITEM 2: HTTP Operations Request/Response Logs
+------------------------------------------------------------------------
+
+[GET ALL PIZZAS]
+Request Sent:
+GET http://localhost:5284/api/pizza
+Accept: application/json
+
+Response Received (Status Code: 200 OK):
+[
+  {"id": 1, "name": "Classic Italian", "isGlutenFree": false},
+  {"id": 2, "name": "Veggie", "isGlutenFree": true},
+  {"id": 3, "name": "Supreme Feast", "isGlutenFree": false}
+]
+
+[POST NEW PIZZA]
+Request Sent:
+POST http://localhost:5284/api/pizza
+Content-Type: application/json
+{
+  "name": "Supreme Feast",
+  "isGlutenFree": false
+}
+
+Response Received (Status Code: 201 Created):
+{"id": 3, "name": "Supreme Feast", "isGlutenFree": false}
+
+[PUT UPDATE PIZZA]
+Request Sent:
+PUT http://localhost:5284/api/pizza/3
+Content-Type: application/json
+{
+  "id": 3,
+  "name": "Supreme Feast XL",
+  "isGlutenFree": true
+}
+
+Response Received (Status Code: 204 No Content):
+(Empty Response Body)
+
+[DELETE PIZZA]
+Request Sent:
+DELETE http://localhost:5284/api/pizza/3
+
+Response Received (Status Code: 200 OK or 204 No Content):
+(Action successfully enacted)
+
+
+------------------------------------------------------------------------
+ITEM 3: Working Sales Summary Function Copy
+------------------------------------------------------------------------
+public static void GenerateSalesSummary(string outputDirectory, IEnumerable<string> salesFiles)
+{
+    string reportFilePath = Path.Combine(outputDirectory, "salesSummary.txt");
+    double totalSales = 0;
+    StringBuilder detailsBuilder = new StringBuilder();
+
+    foreach (var file in salesFiles)
+    {
+        string fileName = Path.GetFileName(file);
+        string fileContent = File.ReadAllText(file);
+        
+        if (double.TryParse(fileContent, out double fileTotal))
+        {
+            totalSales += fileTotal;
+            detailsBuilder.AppendLine($"  {fileName}: {fileTotal:C}");
+        }
+    }
+
+    StringBuilder reportBuilder = new StringBuilder();
+    reportBuilder.AppendLine("Sales Summary");
+    reportBuilder.AppendLine("----------------------------");
+    reportBuilder.AppendLine($" Total Sales: {totalSales:C}");
+    reportBuilder.AppendLine();
+    reportBuilder.AppendLine(" Details:");
+    reportBuilder.Append(detailsBuilder.ToString());
+
+    File.WriteAllText(reportFilePath, reportBuilder.ToString());
+}
